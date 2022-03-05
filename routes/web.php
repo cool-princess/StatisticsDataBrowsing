@@ -1,0 +1,98 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LogInController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminManageController;
+use App\Http\Controllers\Admin\AdminRegistrationController;
+use App\Http\Controllers\Admin\UserRegistrationController;
+use App\Http\Controllers\VisitorCsvUploadController;
+use App\Http\Controllers\StatisticsFileController;
+use App\Http\Controllers\ImportExportController;
+use App\Http\Controllers\MailSendController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+Auth::routes();
+
+Route::get('/admin/login', [LoginController::class, 'showAdminLoginForm'])->name('showAdminLoginForm');
+Route::post('/admin/login', [LoginController::class,'adminLogin'])->name('adminLoginPost');
+Route::get('/user/login', [LoginController::class, 'showUserLoginForm'])->name('showUserLoginForm');
+Route::post('/user/login', [LoginController::class,'userLogin'])->name('userLoginPost');
+Route::get('/user/home', [LoginController::class,'userHome'])->name('userHome');
+
+Route::get('/admin/logout', [LogoutController::class,'adminLogout'])->name('adminLogout');
+Route::get('/user/logout', [LogoutController::class,'userLogout'])->name('userLogout');
+
+Route::get('/admin/register', [AdminRegistrationController::class,'show'])->name('adminRegister');
+Route::post('/admin/register', [AdminRegistrationController::class,'store'])->name('adminRegisterPost');
+
+Route::get('/admin/home', [AdminDashboardController::class, 'index'])->name('adminHome');
+
+Route::get('/admin/user_register', [UserRegistrationController::class, 'index'])->name('userRegister');
+Route::post('/admin/user_register', [UserRegistrationController::class, 'store'])->name('userRegisterPost');
+
+Route::group(['middleware' => 'auth:user'], function () {
+    Route::view('/user', 'user');
+});
+
+Route::group(['middleware' => 'auth:admin'], function () {
+    Route::view('/admin', 'admin');
+});
+
+Route::post('/admin/news', [AdminDashboardController::class, 'store'])->name('newsRegisterPost');
+Route::post('/admin/news_update/{no}', [AdminDashboardController::class, 'update'])->name('newsUpdatePost');
+Route::get('/admin/news_delete/{no}', [AdminDashboardController::class, 'delete'])->name('newsDelete');
+
+Route::get('/admin/manage', [AdminManageController::class, 'show'])->name('adminManage');
+Route::get('/admin/get/{id}', [AdminManageController::class, 'getInfo'])->name('adminGet');
+Route::post('/admin/update/{admin_id}', [AdminManageController::class, 'updateInfo'])->name('adminUpdatePost');
+Route::get('/admin/delete/{admin_id}', [AdminManageController::class, 'delete'])->name('adminDelete');
+
+Route::get('/user/get/{id}', [UserRegistrationController::class, 'getInfo'])->name('userGet');
+Route::get('/admin/user_search', [UserRegistrationController::class, 'userSearch'])->name('userSearchPost');
+Route::post('/user/update/{user_id}', [UserRegistrationController::class, 'updateInfo'])->name('userUpdatePost');
+Route::get('/user/delete/{user_id}', [UserRegistrationController::class, 'delete'])->name('userDelete');
+Route::get('/admin/user_manage', [UserRegistrationController::class, 'show'])->name('userManage');
+
+Route::get('admin/visitor_csv_upload', [VisitorCsvUploadController::class, 'createCsvForm'])->name('visitorCsvRegister');
+Route::post('admin/visitor_csv_upload', [VisitorCsvUploadController::class, 'csvFileUpload'])->name('visitorCsvUpload');
+
+Route::get('admin/member_csv_upload', [ImportExportController::class, 'importUser'])->name('memberCsvFileRegister');
+Route::post('admin/member_csv_upload', [ImportExportController::class, 'import'])->name('memberCsvFileUpload');
+Route::get('admin/member_csv_export/{extension}', [ImportExportController::class, 'export'])->name('memberCsvFileExport');
+Route::post('admin/download_count_export', [ImportExportController::class, 'userCountExport'])->name('downloadCountExport');
+Route::get('/admin/user_count_download', function () {
+    return view('pages.admin.user_count_download');
+})->name('userCountDownload');
+Route::get('/admin/visitor_csv_register', [VisitorCsvUploadController::class,'createCsvForm'])->name('visitorCsvRegister');
+Route::get('/admin/visitor_data', [VisitorCsvUploadController::class,'show'])->name('visitorData');
+Route::get('/admin/visitor_data_delete/{no}', [VisitorCsvUploadController::class, 'delete'])->name('visitorDataDelete');
+
+Route::get('/admin/statistics_file', [StatisticsFileController::class,'showStatisticsFile'])->name('statisticsFile');
+Route::get('/admin/statistics_file_register', [StatisticsFileController::class,'showStatisticsFileRegister'])->name('statisticsFileRegister');
+Route::post('/admin/statistics_file_register', [StatisticsFileController::class,'statisticsFileRegister'])->name('statisticsFileRegisterPost');
+Route::get('/admin/statistics_file_update/{id}', [StatisticsFileController::class,'showStatisticsFileUpdate'])->name('statisticsFileUpdate');
+Route::post('/admin/statistics_file_update/{id}', [StatisticsFileController::class,'statisticsFileUpdate'])->name('statisticsFileUpdatePost');
+Route::get('/admin/statistics_file_delete/{id}', [StatisticsFileController::class, 'delete'])->name('statisticsFileDelete');
+Route::get('admin/statistics_file_export/{id}', [StatisticsFileController::class, 'statisticsFileExport'])->name('statisticsFileExport');
+Route::post('user/report_file_export', [StatisticsFileController::class, 'reportFileExport'])->name('reportDownloadPost');
+Route::get('/admin/mail_create', [MailSendController::class, 'show'])->name('mailCreate');
+
+Route::get('/admin/mail_send', function () {
+    return view('pages.admin.mail_send');
+})->name('mailSend');
+
+
+
+
