@@ -6,10 +6,12 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens; 
 
 class Admin extends Authenticatable
 {
     use HasFactory, Notifiable;
+    use HasApiTokens;
     protected $table="admin";
     protected $guard  = 'admins';
 
@@ -27,7 +29,8 @@ class Admin extends Authenticatable
         'furi_name', 
         'email', 
         'phone', 
-        'break'
+        'break',
+        'pwd_store'
     ];
 
     /**
@@ -48,12 +51,4 @@ class Admin extends Authenticatable
     protected $casts = [
         'admin_id_verified_at' => 'datetime',
     ];
-
-    /**
-     * Add a mutator to ensure hashed passwords
-     */
-    public function setPasswordAttribute($password)
-    {
-        $this->attributes['password'] = bcrypt($password);
-    }
 }

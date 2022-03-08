@@ -14,8 +14,13 @@ class AdminRegistrationController extends Controller
 {
     public function show()
     {
-        $data = Admin::max('id') + 1;
-        return view('auth.admin.register', ['admin_no' => $data]);
+        if(Auth::guard('admin')->check())
+        {
+            $data = Admin::max('id') + 1;
+            return view('auth.admin.register', ['admin_no' => $data]);
+        }
+        else
+            return redirect('/admin/login');
     }
 
     public function store(Request $request)
@@ -23,8 +28,9 @@ class AdminRegistrationController extends Controller
         $rules = [
             'admin_id' => 'required',
             'name' => 'required',
-            'email_confirm' => 'confirmed',
-            'password'=> 'required|min:8'
+            'email' => 'required|email',
+            'email_confirm' => 'required|same:email|email',
+            'password'=> 'required|min:8, max:8'
         ];
         
         $messages = [
@@ -32,9 +38,8 @@ class AdminRegistrationController extends Controller
             'name.required' => 'お名前を入力する必要があります。',
             'email.email' => 'メールは有効な形式である必要があります。',
             'email_confirm.email' => 'メールは有効な形式である必要があります。',
-            'email_confirm.confirmed' => '確認メールが正しくありません。',
-            'password.min' => 'パスワードは8文字以上である必要があります。',
-            'password.required' => 'パスワードを入力する必要があります。',
+            'email_confirm.same:email' => '確認メールが正しくありません。',
+            'password.max:8' => 'パスワードは8文字以上である必要があります。'
         ];
         
         $this->validate($request, $rules, $messages);
@@ -51,19 +56,17 @@ class AdminRegistrationController extends Controller
 
         $user = Admin::create([
             'admin_id' => $custom_id,
-            'password' => $request->password,
+            'password' => bcrypt($request->password),
             'department_name' => $request->department_name,
             'job_title' => $request->job_title,
             'name' => $request->name,
             'furi_name' => $request->furi_name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'break' => $request->break
+            'break' => $request->break,
+            'pwd_store' => $request->password
         ]);
-
-        // event(new Registered($user));
-
-        // auth()->login($user);
+        
         toastr()->success('管理者情報が保存されました。','',config('toastr.options'));
         return redirect('/admin/manage');
     }

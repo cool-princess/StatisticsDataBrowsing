@@ -51,10 +51,11 @@
                                         </div>
                                         <div class="admin-register-item">
                                             <div class="admin-register-item-left">
-                                                <div>PW<span>必須</span></div>
+                                                <div>PW</div>
                                             </div>
                                             <div class="admin-register-item-right">
-                                                <input type="password" name="password" autocomplete="new-password">
+                                                <input type="password" id="registerPassword" name="password" value="<?php echo substr(md5(mt_rand()), 0, 8); ?>" autocomplete="new-password" readonly="readonly">
+                                                <i class="far fa-eye" id="togglePassword" style="margin-left: -30px; cursor: pointer;"></i>
                                                 @if ($errors->has('password'))
                                                     <span class="invalid-feedback">{{ $errors->first('password') }}</span>
                                                 @endif
@@ -104,11 +105,11 @@
                                         </div>
                                         <div class="admin-register-item">
                                             <div class="admin-register-item-left">
-                                                <div>メールアドレス</div>
+                                                <div>メールアドレス<span>必須</span></div>
                                             </div>
                                             <div class="admin-register-item-right">
                                                 <div class="admin-register-item-right-email">
-                                                    <input type="text" name="email" placeholder="xxx@xxx.xxx">
+                                                    <input type="text" name="email" placeholder="xxx@xxx.xxx" required>
                                                 </div>
                                                 <p>※ 半角英数</p>
                                                 @if ($errors->has('email'))
@@ -161,6 +162,17 @@
             $('#visitorData').removeClass('active');
             $('#statisticsFile').removeClass('active');
             $('#mailSend').removeClass('active');
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#registerPassword');
+            if(togglePassword) {
+                togglePassword.addEventListener('click', function (e) {
+                // toggle the type attribute
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+                // toggle the eye slash icon
+                this.classList.toggle('fa-eye-slash');
+                });
+            }
         });
     </script>
 @stop

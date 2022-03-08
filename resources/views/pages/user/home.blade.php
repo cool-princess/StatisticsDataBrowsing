@@ -53,7 +53,9 @@
                                             </div>
                                         </div>
                                     @empty
-                                        お知らせかありません。
+                                        <div class="news-item-none">
+                                            お知らせかありません。
+                                        </div>
                                     @endforelse
                                 </div>
                             </div>
@@ -185,35 +187,35 @@
                                     <div class="main-part01-ages-body">
                                         <div class="main-part01-ages-item ages10">
                                             <div class="main-part01-ages-item-num01">10</div>
-                                            <div class="main-part01-ages-item-progressbar"><span></span><div class="main-part01-ages-item-num02">99</div></div>
+                                            <div class="main-part01-ages-item-progressbar"><span id="ages_10"></span><div class="main-part01-ages-item-num02">{{ $age_rate[0] }}</div></div>
                                         </div>
                                         <div class="main-part01-ages-item ages20">
                                             <div class="main-part01-ages-item-num01">20</div>
-                                            <div class="main-part01-ages-item-progressbar"><span></span><div class="main-part01-ages-item-num02">80</div></div>
+                                            <div class="main-part01-ages-item-progressbar"><span id="ages_20"></span><div class="main-part01-ages-item-num02">{{ $age_rate[1] }}</div></div>
                                         </div>
                                         <div class="main-part01-ages-item ages30">
                                             <div class="main-part01-ages-item-num01">30</div>
-                                            <div class="main-part01-ages-item-progressbar"><span></span><div class="main-part01-ages-item-num02">70</div></div>
+                                            <div class="main-part01-ages-item-progressbar"><span id="ages_30"></span><div class="main-part01-ages-item-num02">{{ $age_rate[2] }}</div></div>
                                         </div>
                                         <div class="main-part01-ages-item ages40">
                                             <div class="main-part01-ages-item-num01">40</div>
-                                            <div class="main-part01-ages-item-progressbar"><span></span><div class="main-part01-ages-item-num02">60</div></div>
+                                            <div class="main-part01-ages-item-progressbar"><span id="ages_40"></span><div class="main-part01-ages-item-num02">{{ $age_rate[3] }}</div></div>
                                         </div>
                                         <div class="main-part01-ages-item ages50">
                                             <div class="main-part01-ages-item-num01">50</div>
-                                            <div class="main-part01-ages-item-progressbar"><span></span><div class="main-part01-ages-item-num02">50</div></div>
+                                            <div class="main-part01-ages-item-progressbar"><span id="ages_50"></span><div class="main-part01-ages-item-num02">{{ $age_rate[4] }}</div></div>
                                         </div>
                                         <div class="main-part01-ages-item ages60">
                                             <div class="main-part01-ages-item-num01">60</div>
-                                            <div class="main-part01-ages-item-progressbar"><span></span><div class="main-part01-ages-item-num02">40</div></div>
+                                            <div class="main-part01-ages-item-progressbar"><span id="ages_60"></span><div class="main-part01-ages-item-num02">{{ $age_rate[5] }}</div></div>
                                         </div>
                                         <div class="main-part01-ages-item ages70">
                                             <div class="main-part01-ages-item-num01">70</div>
-                                            <div class="main-part01-ages-item-progressbar"><span></span><div class="main-part01-ages-item-num02">30</div></div>
+                                            <div class="main-part01-ages-item-progressbar"><span id="ages_70"></span><div class="main-part01-ages-item-num02">{{ $age_rate[6] }}</div></div>
                                         </div>
                                         <div class="main-part01-ages-item ages80">
                                             <div class="main-part01-ages-item-num01">80</div>
-                                            <div class="main-part01-ages-item-progressbar"><span></span><div class="main-part01-ages-item-num02">20</div></div>
+                                            <div class="main-part01-ages-item-progressbar"><span id="ages_80"></span><div class="main-part01-ages-item-num02">{{ $age_rate[7] }}</div></div>
                                         </div>
                                     </div>
                                 </div>
@@ -228,7 +230,7 @@
                                                     Men
                                                 </div>
                                                 <div class="sex-item-pros">
-                                                    65%
+                                                    {{ $sex_rate }}%
                                                 </div>
                                             </div>
                                             <div class="sex-item">
@@ -236,9 +238,10 @@
                                                     Women
                                                 </div>
                                                 <div class="sex-item-pros">
-                                                    35%
+                                                    {{ 100 - $sex_rate }}%
                                                 </div>
                                             </div>
+                                            <div class="pie-wrapper-after"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -255,27 +258,27 @@
                                             </div>
                                             <div class="main-part02-ticket-item ticket1">
                                                 <div class="main-part02-ticket-item-num01">1</div>
-                                                <div class="main-part02-ticket-item-progressbar"><span></span><div class="main-part02-ticket-item-num02">90</div></div>
+                                                <div class="main-part02-ticket-item-progressbar"><span id="adult_ticket1"></span><div class="main-part02-ticket-item-num02">{{ $adult_ticket_rate[1] }}</div></div>
                                             </div>
                                             <div class="main-part02-ticket-item ticket2">
                                                 <div class="main-part02-ticket-item-num01">2</div>
-                                                <div class="main-part02-ticket-item-progressbar"><span></span><div class="main-part02-ticket-item-num02">99</div></div>
+                                                <div class="main-part02-ticket-item-progressbar"><span id="adult_ticket2"></span><div class="main-part02-ticket-item-num02">{{ $adult_ticket_rate[2] }}</div></div>
                                             </div>
                                             <div class="main-part02-ticket-item ticket3">
                                                 <div class="main-part02-ticket-item-num01">3</div>
-                                                <div class="main-part02-ticket-item-progressbar"><span></span><div class="main-part02-ticket-item-num02">80</div></div>
+                                                <div class="main-part02-ticket-item-progressbar"><span id="adult_ticket3"></span><div class="main-part02-ticket-item-num02">{{ $adult_ticket_rate[3] }}</div></div>
                                             </div>
                                             <div class="main-part02-ticket-item ticket4">
                                                 <div class="main-part02-ticket-item-num01">4</div>
-                                                <div class="main-part02-ticket-item-progressbar"><span></span><div class="main-part02-ticket-item-num02">60</div></div>
+                                                <div class="main-part02-ticket-item-progressbar"><span id="adult_ticket4"></span><div class="main-part02-ticket-item-num02">{{ $adult_ticket_rate[4] }}</div></div>
                                             </div>
                                             <div class="main-part02-ticket-item ticket5">
                                                 <div class="main-part02-ticket-item-num01">5</div>
-                                                <div class="main-part02-ticket-item-progressbar"><span></span><div class="main-part02-ticket-item-num02">50</div></div>
+                                                <div class="main-part02-ticket-item-progressbar"><span id="adult_ticket5"></span><div class="main-part02-ticket-item-num02">{{ $adult_ticket_rate[5] }}</div></div>
                                             </div>
                                             <div class="main-part02-ticket-item ticket6">
                                                 <div class="main-part02-ticket-item-num01">6</div>
-                                                <div class="main-part02-ticket-item-progressbar"><span></span><div class="main-part02-ticket-item-num02">40</div></div>
+                                                <div class="main-part02-ticket-item-progressbar"><span id="adult_ticket6"></span><div class="main-part02-ticket-item-num02">{{ $adult_ticket_rate[6] }}</div></div>
                                             </div>
                                         </div>
                                         <div class="main-part02-ticket-subpart young">
@@ -284,27 +287,27 @@
                                             </div>
                                             <div class="main-part02-ticket-item ticket1">
                                                 <div class="main-part02-ticket-item-num01">1</div>
-                                                <div class="main-part02-ticket-item-progressbar"><span></span><div class="main-part02-ticket-item-num02">90</div></div>
+                                                <div class="main-part02-ticket-item-progressbar"><span id="young_ticket1"></span><div class="main-part02-ticket-item-num02">{{ $young_ticket_rate[1] }}</div></div>
                                             </div>
                                             <div class="main-part02-ticket-item ticket2">
                                                 <div class="main-part02-ticket-item-num01">2</div>
-                                                <div class="main-part02-ticket-item-progressbar"><span></span><div class="main-part02-ticket-item-num02">99</div></div>
+                                                <div class="main-part02-ticket-item-progressbar"><span id="young_ticket2"></span><div class="main-part02-ticket-item-num02">{{ $young_ticket_rate[2] }}</div></div>
                                             </div>
                                             <div class="main-part02-ticket-item ticket3">
                                                 <div class="main-part02-ticket-item-num01">3</div>
-                                                <div class="main-part02-ticket-item-progressbar"><span></span><div class="main-part02-ticket-item-num02">80</div></div>
+                                                <div class="main-part02-ticket-item-progressbar"><span id="young_ticket3"></span><div class="main-part02-ticket-item-num02">{{ $young_ticket_rate[3] }}</div></div>
                                             </div>
                                             <div class="main-part02-ticket-item ticket4">
                                                 <div class="main-part02-ticket-item-num01">4</div>
-                                                <div class="main-part02-ticket-item-progressbar"><span></span><div class="main-part02-ticket-item-num02">60</div></div>
+                                                <div class="main-part02-ticket-item-progressbar"><span id="young_ticket4"></span><div class="main-part02-ticket-item-num02">{{ $young_ticket_rate[4] }}</div></div>
                                             </div>
                                             <div class="main-part02-ticket-item ticket5">
                                                 <div class="main-part02-ticket-item-num01">5</div>
-                                                <div class="main-part02-ticket-item-progressbar"><span></span><div class="main-part02-ticket-item-num02">50</div></div>
+                                                <div class="main-part02-ticket-item-progressbar"><span id="young_ticket5"></span><div class="main-part02-ticket-item-num02">{{ $young_ticket_rate[5] }}</div></div>
                                             </div>
                                             <div class="main-part02-ticket-item ticket6">
                                                 <div class="main-part02-ticket-item-num01">6</div>
-                                                <div class="main-part02-ticket-item-progressbar"><span></span><div class="main-part02-ticket-item-num02">40</div></div>
+                                                <div class="main-part02-ticket-item-progressbar"><span id="young_ticket6"></span><div class="main-part02-ticket-item-num02">{{ $young_ticket_rate[6] }}</div></div>
                                             </div>
                                         </div>
                                     </div>
@@ -449,7 +452,9 @@
                                                 </label>
                                             </div>
                                         @empty
-                                            レポートデータかありません。
+                                            <div class="main-report-none">
+                                                レポートデータかありません。
+                                            </div>
                                         @endforelse
                                         <button type="submit" id="reportDownloadBtn" style="display: none"></button>
                                     </form>
@@ -541,6 +546,39 @@
                 $('#reportPage').addClass('active');
                 $('#reportTab').addClass('active');
             }
+            var ages_rate = {{ json_encode($age_rate) }};
+            $('#ages_10').css('width', ages_rate[0] + 'px');
+            $('#ages_20').css('width', ages_rate[1] + 'px');
+            $('#ages_30').css('width', ages_rate[2] + 'px');
+            $('#ages_40').css('width', ages_rate[3] + 'px');
+            $('#ages_50').css('width', ages_rate[4] + 'px');
+            $('#ages_60').css('width', ages_rate[5] + 'px');
+            $('#ages_70').css('width', ages_rate[6] + 'px');
+            $('#ages_80').css('width', ages_rate[7] + 'px');
+            var sex_rate = {{ json_encode($sex_rate) }};
+            if(sex_rate < 50)
+            {
+                $('.pie-wrapper-after').addClass('active');
+                $('.pie-wrapper-after').css('transform', 'rotate('+ (50 - sex_rate) * 3.6 +'deg)');
+            }
+            else {
+                $('.pie-wrapper-after').removeClass('active');
+                $('.pie-wrapper-after').css('transform', 'rotate(-'+ (180 - (50 - sex_rate) * 3.6) +'deg)');
+            }
+            var adult_ticket_rate = {{ json_encode($adult_ticket_rate) }}
+            var young_ticket_rate = {{ json_encode($young_ticket_rate) }}
+            $('#adult_ticket1').css('width', adult_ticket_rate[1] + 'px');
+            $('#adult_ticket2').css('width', adult_ticket_rate[2] + 'px');
+            $('#adult_ticket3').css('width', adult_ticket_rate[3] + 'px');
+            $('#adult_ticket4').css('width', adult_ticket_rate[4] + 'px');
+            $('#adult_ticket5').css('width', adult_ticket_rate[5] + 'px');
+            $('#adult_ticket6').css('width', adult_ticket_rate[6] + 'px');
+            $('#young_ticket1').css('width', young_ticket_rate[1] + 'px');
+            $('#young_ticket2').css('width', young_ticket_rate[2] + 'px');
+            $('#young_ticket3').css('width', young_ticket_rate[3] + 'px');
+            $('#young_ticket4').css('width', young_ticket_rate[4] + 'px');
+            $('#young_ticket5').css('width', young_ticket_rate[5] + 'px');
+            $('#young_ticket6').css('width', young_ticket_rate[6] + 'px');
         });
     </script>
 @stop

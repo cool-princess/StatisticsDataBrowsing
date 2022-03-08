@@ -16,8 +16,13 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
-        $newsInfo = News::all();
-        return view('pages.admin.home', compact('newsInfo'));
+        if(Auth::guard('admin')->check())
+        {
+            $newsInfo = News::all();
+            return view('pages.admin.home', compact('newsInfo'));
+        }
+        else
+            return redirect('/admin/login');
     }
 
     public function store(Request $request)

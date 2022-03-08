@@ -30,7 +30,8 @@
                                 パスワード：
                             </div>
                             <div class="login-item-input">
-                                <input type="password" name="password" required autocomplete="current-password">
+                                <input type="password" id="loginPassword" name="password" required autocomplete="current-password">
+                                <i class="far fa-eye user-eye" id="togglePassword" style="margin-left: -30px; cursor: pointer;"></i>
                             </div>
                         </div>
                         <label class="login-save" for="remember_me">
@@ -86,5 +87,19 @@
             document.querySelector(".modal").style.visibility = "hidden";
             document.querySelector(".modal").style.opacity = "0";
         }
+
+        $(document).ready(function() {
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#loginPassword');
+            if(togglePassword) {
+                togglePassword.addEventListener('click', function (e) {
+                // toggle the type attribute
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+                // toggle the eye slash icon
+                this.classList.toggle('fa-eye-slash');
+                });
+            }
+        });
     </script>
 @stop

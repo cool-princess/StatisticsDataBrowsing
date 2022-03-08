@@ -10,8 +10,9 @@ use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Validators\Failure;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class UsersImport implements ToModel, WithValidation
+class UsersImport implements ToModel, WithValidation, WithStartRow
 {
     use Importable;
     /**
@@ -32,7 +33,7 @@ class UsersImport implements ToModel, WithValidation
         }
         return new User([
             'user_id'     => $custom_id,
-            'password'     => bcrypt('user_001'),
+            'password'     => bcrypt(substr(md5(mt_rand()), 0, 8)),
             'company_name'     => mb_convert_kana($row[0], "KVC"),
             'furi_company_name'     => mb_convert_encoding($row[1], 'UTF-8', 'EUC-JP'),
             'department_name'     => mb_convert_encoding($row[2], 'UTF-8', 'EUC-JP'),
@@ -48,7 +49,7 @@ class UsersImport implements ToModel, WithValidation
             'address4'     => $row[12],
             'sectors'     => $row[13],
             'break' => $row[14],
-            'pwd_store' => 'user_001'
+            'pwd_store' => substr(md5(mt_rand()), 0, 8)
         ]);
     }
 
@@ -84,6 +85,10 @@ class UsersImport implements ToModel, WithValidation
         ];
     }
   
+    public function startRow(): int
+    {
+        return 2;
+    }
     
     public function getErrors()
     {

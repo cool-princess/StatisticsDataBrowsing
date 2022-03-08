@@ -43,7 +43,7 @@
                                                 </div>
                                             </div>
                                             <div class="admin-register-item-right">
-                                                <input id="admin_no" type="text" name="admin_no" value="{{ $data[0]->no }}" readonly="readonly" required>
+                                                <input id="admin_no" type="text" name="admin_no" value="{{ $data[0]->id }}" readonly="readonly" required>
                                             </div>
                                         </div>
                                         <div class="admin-register-item">
@@ -59,7 +59,11 @@
                                                 <div>PW</div>
                                             </div>
                                             <div class="admin-register-item-right">
-                                                <input id="password" type="password" name="password" value="*********" readonly="readonly">
+                                                <input id="registerPassword" type="password" name="password" value="{{ $data[0]->pwd_store }}">
+                                                <i class="far fa-eye" id="togglePassword" style="margin-left: -30px; cursor: pointer;"></i>
+                                                @if ($errors->has('password'))
+                                                    <span class="invalid-feedback">{{ $errors->first('password') }}</span>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -90,6 +94,9 @@
                                                 <input type="text" name="name" value="{{ $data[0]->name }}" placeholder="愛知　太郎" required><br>
                                                 <p>※ 一部旧字体はご利用いただけない場合がございます。 <br>
                                                 該当の文字を別の文字に置き換えてご入力ください。 例）﨑→崎、髙→高、栁→柳、など</p>
+                                                @if ($errors->has('name'))
+                                                    <span class="invalid-feedback">{{ $errors->first('name') }}</span>
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="admin-register-item">
@@ -103,13 +110,16 @@
                                         </div>
                                         <div class="admin-register-item">
                                             <div class="admin-register-item-left">
-                                                <div>メールアドレス</div>
+                                                <div>メールアドレス<span>必須</span></div>
                                             </div>
                                             <div class="admin-register-item-right">
                                                 <div class="admin-register-item-right-email">
                                                     <input type="text" name="email" value="{{ $data[0]->email }}" placeholder="xxx.xxx">
                                                 </div>
                                                 <p>※ 半角英数</p>
+                                                @if ($errors->has('email'))
+                                                    <span class="invalid-feedback">{{ $errors->first('email') }}</span>
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="admin-register-item">
@@ -155,6 +165,17 @@
             $('#visitorData').removeClass('active');
             $('#statisticsFile').removeClass('active');
             $('#mailSend').removeClass('active');
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#registerPassword');
+            if(togglePassword) {
+                togglePassword.addEventListener('click', function (e) {
+                // toggle the type attribute
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+                // toggle the eye slash icon
+                this.classList.toggle('fa-eye-slash');
+                });
+            }
         });
     </script>
 @stop

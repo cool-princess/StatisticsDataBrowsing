@@ -7,7 +7,7 @@
 <div class="menubar">
     <div class="menubar-group">
         <div class="menubar-name">
-            {{ \Auth::guard('admin')->user()->name}}さん
+            さん
         </div>
     </div>
     <a href="{{ route('adminLogout') }}" class="menubar-btn">

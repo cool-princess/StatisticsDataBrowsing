@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminManageController;
 use App\Http\Controllers\Admin\AdminRegistrationController;
 use App\Http\Controllers\Admin\UserRegistrationController;
-use App\Http\Controllers\VisitorCsvUploadController;
+use App\Http\Controllers\TicketCsvUploadController;
 use App\Http\Controllers\StatisticsFileController;
 use App\Http\Controllers\ImportExportController;
 use App\Http\Controllers\MailSendController;
@@ -65,19 +65,18 @@ Route::post('/user/update/{user_id}', [UserRegistrationController::class, 'updat
 Route::get('/user/delete/{user_id}', [UserRegistrationController::class, 'delete'])->name('userDelete');
 Route::get('/admin/user_manage', [UserRegistrationController::class, 'show'])->name('userManage');
 
-Route::get('admin/visitor_csv_upload', [VisitorCsvUploadController::class, 'createCsvForm'])->name('visitorCsvRegister');
-Route::post('admin/visitor_csv_upload', [VisitorCsvUploadController::class, 'csvFileUpload'])->name('visitorCsvUpload');
+Route::get('/admin/visitor_csv_upload', [TicketCsvUploadController::class, 'createCsvForm'])->name('visitorCsvRegister');
+Route::post('/admin/visitor_csv_upload', [TicketCsvUploadController::class, 'csvFileUpload'])->name('visitorCsvUpload');
 
-Route::get('admin/member_csv_upload', [ImportExportController::class, 'importUser'])->name('memberCsvFileRegister');
-Route::post('admin/member_csv_upload', [ImportExportController::class, 'import'])->name('memberCsvFileUpload');
-Route::get('admin/member_csv_export/{extension}', [ImportExportController::class, 'export'])->name('memberCsvFileExport');
-Route::post('admin/download_count_export', [ImportExportController::class, 'userCountExport'])->name('downloadCountExport');
-Route::get('/admin/user_count_download', function () {
-    return view('pages.admin.user_count_download');
-})->name('userCountDownload');
-Route::get('/admin/visitor_csv_register', [VisitorCsvUploadController::class,'createCsvForm'])->name('visitorCsvRegister');
-Route::get('/admin/visitor_data', [VisitorCsvUploadController::class,'show'])->name('visitorData');
-Route::get('/admin/visitor_data_delete/{no}', [VisitorCsvUploadController::class, 'delete'])->name('visitorDataDelete');
+Route::get('/admin/member_csv_upload', [ImportExportController::class, 'importUser'])->name('memberCsvFileRegister');
+Route::post('/admin/member_csv_upload', [ImportExportController::class, 'import'])->name('memberCsvFileUpload');
+Route::get('/admin/member_csv_export/{extension}', [ImportExportController::class, 'export'])->name('memberCsvFileExport');
+Route::post('/admin/download_count_export', [ImportExportController::class, 'userCountExport'])->name('downloadCountExport');
+Route::get('/admin/user_count_download', [ImportExportController::class, 'userCountShow'])->name('userCountDownload');
+
+Route::get('/admin/visitor_csv_register', [TicketCsvUploadController::class,'createCsvForm'])->name('visitorCsvRegister');
+Route::get('/admin/visitor_data', [TicketCsvUploadController::class,'show'])->name('visitorData');
+Route::get('/admin/visitor_data_delete/{no}', [TicketCsvUploadController::class, 'delete'])->name('visitorDataDelete');
 
 Route::get('/admin/statistics_file', [StatisticsFileController::class,'showStatisticsFile'])->name('statisticsFile');
 Route::get('/admin/statistics_file_register', [StatisticsFileController::class,'showStatisticsFileRegister'])->name('statisticsFileRegister');
@@ -88,10 +87,11 @@ Route::get('/admin/statistics_file_delete/{id}', [StatisticsFileController::clas
 Route::get('admin/statistics_file_export/{id}', [StatisticsFileController::class, 'statisticsFileExport'])->name('statisticsFileExport');
 Route::post('user/report_file_export', [StatisticsFileController::class, 'reportFileExport'])->name('reportDownloadPost');
 Route::get('/admin/mail_create', [MailSendController::class, 'show'])->name('mailCreate');
+Route::post('/admin/mail_send', [MailSendController::class, 'sendMail'])->name('mailSendPost');
 
-Route::get('/admin/mail_send', function () {
+Route::get('/admin/mail', function () {
     return view('pages.admin.mail_send');
-})->name('mailSend');
+})->name('mail');
 
 
 

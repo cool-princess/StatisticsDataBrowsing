@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\Statistics;
+use Illuminate\Support\Facades\Auth;
 use ZipArchive;
 use File;
 use PDF;
@@ -11,14 +12,24 @@ class StatisticsFileController extends Controller
 {
   public function showStatisticsFile()
   {
-    $files = Statistics::paginate($perPage = 5);
-    return view('pages.admin.statistics_file', compact('files'));
+    if(Auth::guard('admin')->check())
+    {
+      $files = Statistics::paginate($perPage = 5);
+      return view('pages.admin.statistics_file', compact('files'));
+    }
+    else
+        return redirect('/admin/login');
   }
 
   public function showStatisticsFileRegister()
   {
-    $data = Statistics::max('id') + 1;
-    return view('pages.admin.statistics_file_register', ['file_no' => $data]);
+    if(Auth::guard('admin')->check())
+    {
+      $data = Statistics::max('id') + 1;
+      return view('pages.admin.statistics_file_register', ['file_no' => $data]);
+    }
+    else
+        return redirect('/admin/login');
   }
 
   public function statisticsFileRegister(Request $req) 
@@ -53,8 +64,13 @@ class StatisticsFileController extends Controller
 
   public function showStatisticsFileUpdate($id)
   {
-    $data = Statistics::where('id', $id)->get();
-    return view('pages.admin.statistics_file_update', compact('data'));
+    if(Auth::guard('admin')->check())
+    {
+      $data = Statistics::where('id', $id)->get();
+      return view('pages.admin.statistics_file_update', compact('data'));
+    }
+    else
+        return redirect('/admin/login');
   }
 
   public function statisticsFileUpdate(Request $req, $id)

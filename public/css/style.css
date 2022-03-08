@@ -123,6 +123,16 @@ button:hover {
     margin-right: 35px;
 }
 
+.login-item-input {
+    position: relative;
+}
+
+.login-item-input #togglePassword {
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10px;
+}
+
 .login-item-input input {
     width: 220px;
     height: 26px;
@@ -487,6 +497,12 @@ button:hover {
     margin-bottom: 10px;
 }
 
+.news-item-none {
+    width: 100%;
+    text-align: center;
+    margin: 60px 0;
+}
+
 .news-item {
     display: flex;
     flex-direction: column;
@@ -773,7 +789,7 @@ button:hover {
 }
 
 .main-part01-ages-item.ages10 .main-part01-ages-item-progressbar span {
-    width: 99%;
+    /* width: 99%; */
     background-color: #F8C4A3;
 }
 
@@ -862,7 +878,7 @@ button:hover {
     background: linear-gradient(to right, #41A1BE 50%, #E95383 50%);
 }
 
-.pie-wrapper::after {
+.pie-wrapper-after {
     border-radius: 0 100% 100% 0%;
     content: '';
     display: block;
@@ -870,9 +886,12 @@ button:hover {
     height: 100%;
     margin-left: 50%;
     background: #41A1BE;
-    transform: rotate(126deg);
     transform-origin: left;
     position: absolute;
+}
+
+.pie-wrapper-after.active {
+    background: #E95383;
 }
 
 .sex-item {
@@ -1246,6 +1265,13 @@ button:hover {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+}
+
+.main-report-none {
+    color: white;
+    text-align: center;
+    width: 100%;
+    margin-top: 60px;
 }
 
 .main-report-item {
@@ -1795,6 +1821,7 @@ button:hover {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    position: relative;
     font-size: 13px;
 }
 
@@ -2767,7 +2794,6 @@ input[type=file]::-webkit-file-upload-button {
 }
 
 .admin-register-item-right input#rand_id,
-.admin-register-item-right input#password,
 .admin-register-item-right input#admin_no,
 .admin-register-item-right input#user_no {
     border: none;
@@ -2775,9 +2801,18 @@ input[type=file]::-webkit-file-upload-button {
 }
 
 input#rand_id:focus,
-input#password:focus,
 input#fileName:focus,
 input#admin_no:focus,
 input#user_no:focus {
     outline: none;
+}
+
+#togglePassword {
+    position: absolute;
+    top: 11px;
+    right: 20px;
+}
+
+.fa-eye.user-eye:before {
+    color: black;
 }

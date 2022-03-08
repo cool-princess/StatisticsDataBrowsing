@@ -5,6 +5,11 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use App\Providers\RouteServiceProvider;
@@ -16,26 +21,46 @@ class UserRegistrationController extends Controller
     
     public function index()
     {
-        $data = User::max('id') + 1;
-        return view('auth.user.register', ['user_no' => $data]);
+        if(Auth::guard('admin')->check())
+        {
+            $data = User::max('id') + 1;
+            return view('auth.user.register', ['user_no' => $data]);
+        }
+        else
+            return redirect('/admin/login');
     }
 
     public function show()
     {
-        $users = User::paginate($perPage = 5);
-        return view('pages.admin.user_manage', compact('users'));
+        if(Auth::guard('admin')->check())
+        {
+            $users = User::paginate($perPage = 5);
+            return view('pages.admin.user_manage', compact('users'));
+        }
+        else
+            return redirect('/admin/login');
     }
 
     public function store(Request $request)
     {
         $rules = [
-            'user_id' => 'required',
-            'name' => 'required',
-            'email' => 'confirmed',
-            'email_confirm' => 'confirmed',
-            'password'=> 'required|min:8'
+            'user_id' => ['required'],
+            'name' => ['required'],
+            'email' => 'required|email',
+            'email_confirm' => 'required|same:email|email',
+            'password'=> ['required', 'max:8', 'min:8']
         ];
-        $this->validate($request, $rules);
+
+        $messages = [
+            'name.required' => 'お名前を入力する必要があります。',
+            'email.email' => 'メールは有効な形式である必要があります。',
+            'email_confirm.email' => 'メールは有効な形式である必要があります。',
+            'email_confirm.same:email' => '確認メールが正しくありません。',
+            'password.max:8' => 'パスワードは8文字以上である必要があります。'
+        ];
+        
+        $this->validate($request, $rules, $messages);
+
         $user_id = DB::table('users')->select('user_id')->get();
         $custom_id = $request->user_id;
         loop:
@@ -48,7 +73,7 @@ class UserRegistrationController extends Controller
 
         $user = User::create([
             'user_id' => $custom_id,
-            'password' => $request->password,
+            'password' => bcrypt($request->password),
             'company_name' => $request->company_name,
             'furi_company_name' => $request->furi_company_name,
             'department_name' => $request->department_name,
@@ -73,8 +98,13 @@ class UserRegistrationController extends Controller
 
     public function getInfo($id)
     {
-        $data = User::where('user_id', $id)->get();
-        return view('auth.user.update', compact('data'));
+        if(Auth::guard('admin')->check())
+        {
+            $data = User::where('user_id', $id)->get();
+            return view('auth.user.update', compact('data'));
+        }
+        else
+            return redirect('/admin/login');
     }
 
     public function userSearch(Request $request)
@@ -110,10 +140,25 @@ class UserRegistrationController extends Controller
 
     public function updateInfo(Request $request, $user_id)
     {
-        $this->validate($request, [
-            'user_id'=> 'required'
-        ]);
+        $rules = [
+            'user_id' => ['required'],
+            'name' => ['required'],
+            'email' => 'required|email',
+            'email_confirm' => 'required|same:email|email',
+            'password'=> ['required', 'max:8', 'min:8']
+        ];
 
+        $messages = [
+            'name.required' => 'お名前を入力する必要があります。',
+            'email.email' => 'メールは有効な形式である必要があります。',
+            'email_confirm.email' => 'メールは有効な形式である必要があります。',
+            'email_confirm.same:email' => '確認メールが正しくありません。',
+            'password.max:8' => 'パスワードは8文字以上である必要があります。'
+        ];
+        
+        $this->validate($request, $rules, $messages);
+
+        User::where('user_id', $request->input('user_id'))->update(array('password' => bcrypt($request->input('password'))));
         User::where('user_id', $request->input('user_id'))->update(array('company_name' => $request->input('company_name')));
         User::where('user_id', $request->input('user_id'))->update(array('furi_company_name' => $request->input('furi_company_name')));
         User::where('user_id', $request->input('user_id'))->update(array('department_name' => $request->input('department_name')));
@@ -129,6 +174,7 @@ class UserRegistrationController extends Controller
         User::where('user_id', $request->input('user_id'))->update(array('address4' => $request->input('address4')));
         User::where('user_id', $request->input('user_id'))->update(array('sectors' => $request->input('sectors')));
         User::where('user_id', $request->input('user_id'))->update(array('break' => $request->input('break')));
+        User::where('user_id', $request->input('user_id'))->update(array('pwd_store' => $request->input('password')));
         $users = User::paginate($perPage = 5);
         toastr()->success('会員情報が更新されました。','',config('toastr.options'));
         return view('pages.admin.user_manage', compact('users'));

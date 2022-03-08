@@ -24,6 +24,7 @@ class CreateAdminTable extends Migration
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->integer('break');
+            $table->string('pwd_store');
             $table->rememberToken();
             $table->timestamps();
         });

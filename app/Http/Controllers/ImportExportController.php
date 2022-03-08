@@ -17,7 +17,12 @@ use App\Models\User;
 class ImportExportController extends Controller
 {
     public function importUser( ){
-        return view('pages.admin.csv_register');
+        if(Auth::guard('admin')->check())
+        {
+            return view('pages.admin.csv_register');
+        }
+        else
+            return redirect('/admin/login');
     }
 
     /**
@@ -69,6 +74,16 @@ class ImportExportController extends Controller
     public function export($slug) 
     {
         return Excel::download(new UsersExport, '会員リスト.'.$slug);
+    }
+
+    public function userCountShow ()
+    {
+        if(Auth::guard('admin')->check())
+        {
+            return view('pages.admin.user_count_download');
+        }
+        else
+            return redirect('/admin/login');
     }
 
     public function userCountExport(Request $request) 
