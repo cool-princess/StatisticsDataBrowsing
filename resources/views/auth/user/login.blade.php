@@ -5,8 +5,8 @@
         <div class="container">
             <div class="login-wrap">
                 <div class="login-title">
-                    <h1>ジブリパークチケット購入者<br>
-                        統計データ提供サイト
+                    <h1>ジブリパーク周遊観光促進事業<br>
+                        チケット購入統計データ提供サイト
                     </h1>
                 </div>
                 @if ($error = $errors->first('user_id'))
@@ -38,7 +38,7 @@
                             ログインID・パスワードを保持する<input type="checkbox" id="remember_me" name="remember">
                             <span class="checkmark"></span>
                         </label>
-                        <a href="#forgot-modal" class="login-info-forgot">ID・パスワードを忘れた方はこちら</a>
+                        <a href="" class="login-info-forgot">ID・パスワードを忘れた方はこちら</a>
                         <button type="submit" class="login-btn">
                             ログイン
                         </button>
@@ -62,7 +62,7 @@
                         ・連絡先<br>
                         愛知県観光コンベンション局観光振興課<br>
                         企画グループ<br>
-                        <a href="kanko@pref.aichi.lg.jp">kanko@pref.aichi.lg.jp</a>
+                        <a href="mailto:kanko@pref.aichi.lg.jp">kanko@pref.aichi.lg.jp</a>
                     </p>
                     <a href="#" class="modal-close">&times;</a>
                 </div>
@@ -72,6 +72,7 @@
     <script>
         document.addEventListener("click", function(event) {
                 if (event.target.matches(".login-info-forgot")) {
+                    event.preventDefault();
                     document.querySelector(".modal").style.visibility = "visible";
                     document.querySelector(".modal").style.opacity = "1";
                 }

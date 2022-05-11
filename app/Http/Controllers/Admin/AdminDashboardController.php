@@ -10,7 +10,9 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\MessageBag;
 use App\Models\News;
+use App\Models\Admin;
 
 class AdminDashboardController extends Controller
 {
@@ -18,6 +20,14 @@ class AdminDashboardController extends Controller
     {
         if(Auth::guard('admin')->check())
         {
+            $admin_id = Auth::guard('admin')->user()->admin_id;
+            $admin_break = Admin::select('break')->where('admin_id', '=', $admin_id)->get();
+            if($admin_break[0]->break == 0) {
+                Auth::guard('admin')->logout();
+                $errors = new MessageBag(['admin_id' => ['許可が一時停止されました。']]);
+                return view('auth.admin.login')->withErrors($errors);
+            }
+
             $newsInfo = News::all();
             return view('pages.admin.home', compact('newsInfo'));
         }
@@ -37,13 +47,15 @@ class AdminDashboardController extends Controller
         ]);
 
         $dt = Carbon::create($request->year, $request->month, $request->day, $request->hour, $request->minute);
-
-        $news = News::create([
-            'title' => $request->news,
-            'created_at' => $dt,
-            'updated_at' => $dt
-        ]);
-        
+        $titleCheck = News::where('title', $request->news)->get();
+        if(!$titleCheck->count()) {
+            $news = News::create([
+                'title' => $request->news,
+                'created_at' => $dt,
+                'updated_at' => $dt
+            ]);
+        }
+      
         $newsInfo = News::all();
         toastr()->success('お知らせが保存されました。','',config('toastr.options'));
         return view('pages.admin.home', compact('newsInfo'));
@@ -53,7 +65,7 @@ class AdminDashboardController extends Controller
     {
         $dt = Carbon::create($request->year, $request->month, $request->day, $request->hour, $request->minute);
         News::where('id', $no)->update(array('title' => $request->input('updated_news')));
-        News::where('id', $no)->update(array('updated_at' => $dt));
+        News::where('id', $no)->update(array('created_at' => $dt));
         $newsInfo = News::all();
         toastr()->success('お知らせが更新されました。','',config('toastr.options'));
         return view('pages.admin.home', compact('newsInfo'));

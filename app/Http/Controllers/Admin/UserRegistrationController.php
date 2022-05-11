@@ -13,8 +13,10 @@ use Illuminate\Validation\Rules;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Support\MessageBag;
 use App\Models\File;
 use App\Models\User;
+use App\Models\Admin;
 
 class UserRegistrationController extends Controller
 {
@@ -23,6 +25,14 @@ class UserRegistrationController extends Controller
     {
         if(Auth::guard('admin')->check())
         {
+            $admin_id = Auth::guard('admin')->user()->admin_id;
+            $admin_break = Admin::select('break')->where('admin_id', '=', $admin_id)->get();
+            if($admin_break[0]->break == 0) {
+                Auth::guard('admin')->logout();
+                $errors = new MessageBag(['admin_id' => ['許可が一時停止されました。']]);
+                return view('auth.admin.login')->withErrors($errors);
+            }
+
             $data = User::max('id') + 1;
             return view('auth.user.register', ['user_no' => $data]);
         }
@@ -34,7 +44,15 @@ class UserRegistrationController extends Controller
     {
         if(Auth::guard('admin')->check())
         {
-            $users = User::paginate($perPage = 5);
+            $admin_id = Auth::guard('admin')->user()->admin_id;
+            $admin_break = Admin::select('break')->where('admin_id', '=', $admin_id)->get();
+            if($admin_break[0]->break == 0) {
+                Auth::guard('admin')->logout();
+                $errors = new MessageBag(['admin_id' => ['許可が一時停止されました。']]);
+                return view('auth.admin.login')->withErrors($errors);
+            }
+
+            $users = User::orderBy('created_at', 'desc')->paginate($perPage = 5);
             return view('pages.admin.user_manage', compact('users'));
         }
         else
@@ -100,6 +118,14 @@ class UserRegistrationController extends Controller
     {
         if(Auth::guard('admin')->check())
         {
+            $admin_id = Auth::guard('admin')->user()->admin_id;
+            $admin_break = Admin::select('break')->where('admin_id', '=', $admin_id)->get();
+            if($admin_break[0]->break == 0) {
+                Auth::guard('admin')->logout();
+                $errors = new MessageBag(['admin_id' => ['許可が一時停止されました。']]);
+                return view('auth.admin.login')->withErrors($errors);
+            }
+            
             $data = User::where('user_id', $id)->get();
             return view('auth.user.update', compact('data'));
         }
@@ -175,7 +201,7 @@ class UserRegistrationController extends Controller
         User::where('user_id', $request->input('user_id'))->update(array('sectors' => $request->input('sectors')));
         User::where('user_id', $request->input('user_id'))->update(array('break' => $request->input('break')));
         User::where('user_id', $request->input('user_id'))->update(array('pwd_store' => $request->input('password')));
-        $users = User::paginate($perPage = 5);
+        $users = User::orderBy('created_at', 'desc')->paginate($perPage = 5);
         toastr()->success('会員情報が更新されました。','',config('toastr.options'));
         return view('pages.admin.user_manage', compact('users'));
     }
@@ -183,7 +209,7 @@ class UserRegistrationController extends Controller
     public function delete($user_id)
     {
         User::where('user_id', $user_id)->delete();
-        $users = User::paginate($perPage = 5);
+        $users = User::orderBy('created_at', 'desc')->paginate($perPage = 5);
         toastr()->success('会員情報が削除されました。','',config('toastr.options'));
         return view('pages.admin.user_manage', compact('users'));
     }

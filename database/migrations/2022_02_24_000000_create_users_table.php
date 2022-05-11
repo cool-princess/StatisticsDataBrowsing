@@ -33,6 +33,7 @@ class CreateUsersTable extends Migration
             $table->string('sectors')->nullable();
             $table->string('break');
             $table->integer('login_count')->default(0);
+            $table->integer('download_count')->default(0);
             $table->string('pwd_store');
             $table->rememberToken();
             $table->timestamps();

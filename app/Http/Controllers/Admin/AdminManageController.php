@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Support\MessageBag;
 use App\Models\Admin;
 
 class AdminManageController extends Controller
@@ -17,7 +18,15 @@ class AdminManageController extends Controller
     {
         if(Auth::guard('admin')->check())
         {
-            $admins = Admin::paginate($perPage = 5);
+            $admin_id = Auth::guard('admin')->user()->admin_id;
+            $admin_break = Admin::select('break')->where('admin_id', '=', $admin_id)->get();
+            if($admin_break[0]->break == 0) {
+                Auth::guard('admin')->logout();
+                $errors = new MessageBag(['admin_id' => ['許可が一時停止されました。']]);
+                return view('auth.admin.login')->withErrors($errors);
+            }
+
+            $admins = Admin::orderBy('created_at', 'desc')->paginate($perPage = 5);
             return view('pages.admin.admin_manage', compact('admins'));
         }
         else
@@ -28,6 +37,14 @@ class AdminManageController extends Controller
     {
         if(Auth::guard('admin')->check())
         {
+            $admin_id = Auth::guard('admin')->user()->admin_id;
+            $admin_break = Admin::select('break')->where('admin_id', '=', $admin_id)->get();
+            if($admin_break[0]->break == 0) {
+                Auth::guard('admin')->logout();
+                $errors = new MessageBag(['admin_id' => ['許可が一時停止されました。']]);
+                return view('auth.admin.login')->withErrors($errors);
+            }
+            
             $data = Admin::where('admin_id', $id)->get();
             return view('auth.admin.update', compact('data'));
         }
@@ -65,7 +82,7 @@ class AdminManageController extends Controller
         Admin::where('admin_id', $request->input('admin_id'))->update(array('phone' => $request->input('phone')));
         Admin::where('admin_id', $request->input('admin_id'))->update(array('break' => $request->input('break')));
         Admin::where('admin_id', $request->input('admin_id'))->update(array('pwd_store' => $request->input('password')));
-        $admins = Admin::paginate($perPage = 5);
+        $admins = Admin::orderBy('created_at', 'desc')->paginate($perPage = 5);
         toastr()->success('管理者情報が更新されました。','',config('toastr.options'));
         return view('pages.admin.admin_manage', compact('admins'));
     }
@@ -73,7 +90,7 @@ class AdminManageController extends Controller
     public function delete($admin_id)
     {
         Admin::where('admin_id', $admin_id)->delete();
-        $admins = Admin::paginate($perPage = 5);
+        $admins = Admin::orderBy('created_at', 'desc')->paginate($perPage = 5);
         toastr()->success('管理者情報が削除されました。','',config('toastr.options'));
         return view('pages.admin.admin_manage', compact('admins'));
     }

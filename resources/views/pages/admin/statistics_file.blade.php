@@ -56,7 +56,7 @@
                                         @if($files->currentPage() != 1)
                                             <a href="{{ $files->previousPageUrl() }}" class="main-pagination-prev btn-primary">前のページへ</a>
                                         @endif
-                                        @if($files->total() > 5)
+                                        @if($files->total() > 20)
                                             <div class="main-pagination-pages">{{ $files->currentPage() }} / {{ $files->lastPage() }} </div>
                                         @endif
                                         @if($files->currentPage() != $files->lastPage())

@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\Statistics;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\MessageBag;
+use App\Models\Admin;
 use ZipArchive;
 use File;
 use PDF;
@@ -14,7 +16,15 @@ class StatisticsFileController extends Controller
   {
     if(Auth::guard('admin')->check())
     {
-      $files = Statistics::paginate($perPage = 5);
+      $admin_id = Auth::guard('admin')->user()->admin_id;
+      $admin_break = Admin::select('break')->where('admin_id', '=', $admin_id)->get();
+      if($admin_break[0]->break == 0) {
+        Auth::guard('admin')->logout();
+        $errors = new MessageBag(['admin_id' => ['許可が一時停止されました。']]);
+        return view('auth.admin.login')->withErrors($errors);
+      }
+
+      $files = Statistics::orderBy('created_at', 'desc')->paginate($perPage = 20);
       return view('pages.admin.statistics_file', compact('files'));
     }
     else
@@ -25,6 +35,13 @@ class StatisticsFileController extends Controller
   {
     if(Auth::guard('admin')->check())
     {
+      $admin_id = Auth::guard('admin')->user()->admin_id;
+      $admin_break = Admin::select('break')->where('admin_id', '=', $admin_id)->get();
+      if($admin_break[0]->break == 0) {
+        Auth::guard('admin')->logout();
+        $errors = new MessageBag(['admin_id' => ['許可が一時停止されました。']]);
+        return view('auth.admin.login')->withErrors($errors);
+      }
       $data = Statistics::max('id') + 1;
       return view('pages.admin.statistics_file_register', ['file_no' => $data]);
     }
@@ -44,7 +61,7 @@ class StatisticsFileController extends Controller
       }
       else {
         $fileName = time().'_'.$req->file->getClientOriginalName();
-        $filePath = $req->file('file')->move(public_path('uploads\統計ファイル'), $fileName);
+        $filePath = $req->file('file')->move(public_path('uploads/統計ファイル'), $fileName);
         $fileModel->display_name = time().'_'.$req->file->getClientOriginalName();
         $fileModel->file_path = $filePath;
         $fileModel->category = $req->category;
@@ -52,7 +69,7 @@ class StatisticsFileController extends Controller
         $fileModel->created_at = Carbon::create($req->year, $req->month, $req->day);
         $fileModel->save();
         toastr()->success('統計ファイルが保存されました。','',config('toastr.options'));
-        $files = Statistics::paginate($perPage = 5);
+        $files = Statistics::orderBy('created_at', 'desc')->paginate($perPage = 20);
         return view('pages.admin.statistics_file', compact('files'));
       }
     }
@@ -66,6 +83,14 @@ class StatisticsFileController extends Controller
   {
     if(Auth::guard('admin')->check())
     {
+      $admin_id = Auth::guard('admin')->user()->admin_id;
+      $admin_break = Admin::select('break')->where('admin_id', '=', $admin_id)->get();
+      if($admin_break[0]->break == 0) {
+        Auth::guard('admin')->logout();
+        $errors = new MessageBag(['admin_id' => ['許可が一時停止されました。']]);
+        return view('auth.admin.login')->withErrors($errors);
+      }
+
       $data = Statistics::where('id', $id)->get();
       return view('pages.admin.statistics_file_update', compact('data'));
     }
@@ -84,14 +109,14 @@ class StatisticsFileController extends Controller
       }
       else {
         $fileName = time().'_'.$req->file->getClientOriginalName();
-        $filePath = $req->file('file')->move(public_path('uploads\統計ファイル'), $fileName);
+        $filePath = $req->file('file')->move(public_path('uploads/統計ファイル'), $fileName);
         Statistics::where('id', $id)->update(array('category' => $req->input('category')));
         Statistics::where('id', $id)->update(array('reporter' => $req->input('reporter')));
         Statistics::where('id', $id)->update(array('display_name' => time().'_'.$req->file->getClientOriginalName()));
         Statistics::where('id', $id)->update(array('file_path' => $filePath));
         Statistics::where('id', $id)->update(array('updated_at' => Carbon::create($req->year, $req->month, $req->day)));
         toastr()->success('統計ファイルが更新されました。','',config('toastr.options'));
-        $files = Statistics::paginate($perPage = 5);
+        $files = Statistics::orderBy('created_at', 'desc')->paginate($perPage = 20);
         return view('pages.admin.statistics_file', compact('files'));
       }
     }
@@ -100,7 +125,7 @@ class StatisticsFileController extends Controller
       Statistics::where('id', $id)->update(array('reporter' => $req->input('reporter')));
       Statistics::where('id', $id)->update(array('updated_at' => Carbon::create($req->year, $req->month, $req->day)));
       toastr()->success('統計ファイルが更新されました。','',config('toastr.options'));
-      $files = Statistics::paginate($perPage = 5);
+      $files = Statistics::orderBy('created_at', 'desc')->paginate($perPage = 20);
       return view('pages.admin.statistics_file', compact('files'));
     }
   }
@@ -108,7 +133,7 @@ class StatisticsFileController extends Controller
   public function delete($id)
   {
     Statistics::where('id', $id)->delete();
-    $files = Statistics::paginate($perPage = 5);
+    $files = Statistics::orderBy('created_at', 'desc')->paginate($perPage = 20);
     toastr()->success('統計ファイルが削除されました。','',config('toastr.options'));
     return view('pages.admin.statistics_file', compact('files'));
   }
@@ -116,8 +141,8 @@ class StatisticsFileController extends Controller
   public function statisticsFileExport($id) 
   {
     $file = Statistics::find($id);
-    $path = storage_path($file->file_path);
-    return response()->download($path);
+    // $path = storage_path($file->file_path);
+    return response()->download($file->file_path);
   }
 
   public function reportFileExport(Request $request) 
@@ -125,7 +150,7 @@ class StatisticsFileController extends Controller
     $fileId = $request->input('fileId');
     $file = Statistics::whereIn('id', $fileId)->get();
     $number_of_files = count($file);
-    if ($number_of_files > 1) {
+    if (($number_of_files > 1) && ($number_of_files <= 10)) {
       if($request->has('download')) {
         $public_dir=public_path().'/uploads';
         $zipFileName = time().'_統計ファイル.zip';
@@ -151,10 +176,13 @@ class StatisticsFileController extends Controller
             return response()->download($filetopath,$zipFileName,$headers);
         }
       }
-    } else {
+    } elseif($number_of_files == 1) {
       $headers = ['Content-Type: application/pdf'];
-      $file_path = storage_path('app/public/'.$file[0]->file_path);
+      $file_path = $file[0]->file_path;
       return response()->download($file_path, $file[0]->display_name, $headers);
+    } else {
+      toastr()->success('一度に選択できるファイル数は10個までです。','',config('toastr.options'));
+      return back();
     }
   }
 }

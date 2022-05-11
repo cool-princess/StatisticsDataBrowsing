@@ -15,6 +15,8 @@ class Ticket extends Model
         'birthday',
         'adult_ticket',
         'young_ticket',
-        'location'
+        'location',
+        'area',
+        'ticketing_date'
     ];
 }

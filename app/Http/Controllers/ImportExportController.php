@@ -10,6 +10,9 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\MessageBag;
+use App\Models\Admin;
 use Session;
 
 use App\Models\User;
@@ -19,6 +22,14 @@ class ImportExportController extends Controller
     public function importUser( ){
         if(Auth::guard('admin')->check())
         {
+            $admin_id = Auth::guard('admin')->user()->admin_id;
+            $admin_break = Admin::select('break')->where('admin_id', '=', $admin_id)->get();
+            if($admin_break[0]->break == 0) {
+                Auth::guard('admin')->logout();
+                $errors = new MessageBag(['admin_id' => ['許可が一時停止されました。']]);
+                return view('auth.admin.login')->withErrors($errors);
+            }
+
             return view('pages.admin.csv_register');
         }
         else
@@ -43,21 +54,11 @@ class ImportExportController extends Controller
                 try {
                     $result = Excel::import(new UsersImport, $path);
                     toastr()->success('会員CSVデータが保存されました。','',config('toastr.options'));
-                    return back();
+                    return back()->with('success','登録を完了しました');
                 }
                 catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
                     $failures = $e->failures();
                     Log::error($e);
-                    $errormessage = "";
-                    foreach ($failures as $failure) {
-                        $errormess = "";
-                        foreach($failure->errors() as $error)
-                        {
-                            $errormess = $errormess.$error;
-                        }
-                        $errormessage .= "At Row ".$failure->row().", ".$errormess." ,\n";
-                    }
-                    Session::flash('error', $errormessage);
                     toastr()->warning('会員CSVデータが保存されませんでした。','',config('toastr.options'));
                     return back()->withErrors($failures);
                 }
@@ -80,6 +81,13 @@ class ImportExportController extends Controller
     {
         if(Auth::guard('admin')->check())
         {
+            $admin_id = Auth::guard('admin')->user()->admin_id;
+            $admin_break = Admin::select('break')->where('admin_id', '=', $admin_id)->get();
+            if($admin_break[0]->break == 0) {
+                Auth::guard('admin')->logout();
+                $errors = new MessageBag(['admin_id' => ['許可が一時停止されました。']]);
+                return view('auth.admin.login')->withErrors($errors);
+            }
             return view('pages.admin.user_count_download');
         }
         else
@@ -96,6 +104,24 @@ class ImportExportController extends Controller
             'address1' => $request->address1,
             'sectors' => $request->sectors
         ];
+
+        $results = User::where(function ($query) use ($param) {
+            if ($param['address1']) {
+                $query->select('user_id')->where('address1', '=', $param['address1']);
+            }
+            if ($param['sectors']) {
+                $query->select('user_id')->where('sectors', '=', $param['sectors']);
+            }
+            if ($param['from_date'] || $param['end_date']) {
+                $query->select('user_id')->whereBetween('created_at', [$param['from_date'], $param['end_date']]);
+            }
+        })->get();
+
+        foreach($results as $result)
+        {
+            User::where('user_id', $result->user_id)->update(array('download_count' => ($result->download_count + 1)));
+        }
+
         return Excel::download(new DownloadCountExport($param), $from_dt.'～'.$end_dt.'.csv');
     }
 }

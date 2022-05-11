@@ -34,22 +34,34 @@
                                             </div>
                                         </div>
                                         <div class="statistics-file-register-item-right">
-                                            <select name="year" id="">
+                                            <select name="year" id="year">
                                                 <option value="">年</option>
-                                                @for ($i = 2012; $i <= 2030; $i++)
-                                                    <option value="{{ $i }}">{{ $i }}年</option>
+                                                @for ($i = 2022; $i <= (now()->year + 3); $i++)
+                                                    @if ($i == now()->year)
+                                                        <option value="{{ $i }}" selected>{{ $i }}年</option>
+                                                    @else
+                                                        <option value="{{ $i }}">{{ $i }}年</option>
+                                                    @endif
                                                 @endfor
                                             </select>
-                                            <select name="month" id="">
+                                            <select name="month" id="month">
                                                 <option value="">月</option>
                                                 @for ($i = 1; $i <= 12; $i++)
-                                                    <option value="{{ $i }}">{{ $i }}月</option>
+                                                    @if ($i == now()->month)
+                                                        <option value="{{ $i }}" selected>{{ $i }}月</option>
+                                                    @else
+                                                        <option value="{{ $i }}">{{ $i }}月</option>
+                                                    @endif
                                                 @endfor
                                             </select>
-                                            <select name="day" id="">
+                                            <select name="day" id="day">
                                                 <option value="">日</option>
                                                 @for ($i = 1; $i <= 31; $i++)
-                                                    <option value="{{ $i }}">{{ $i }}日</option>
+                                                    @if ($i == now()->day)
+                                                        <option value="{{ $i }}" selected>{{ $i }}日</option>
+                                                    @else
+                                                        <option value="{{ $i }}">{{ $i }}日</option>
+                                                    @endif
                                                 @endfor
                                             </select>
                                         </div>
@@ -101,7 +113,7 @@
                                     </div>
                                 </div>
                                 <div class="statistics-file-register-btn-group">
-                                    <button type="submit" class="statistics-file-register-btn btn-primary">新規登録・修正　確認画面へ</button>
+                                    <button type="submit" class="statistics-file-register-btn btn-primary">新規登録・修正</button>
                                 </div>
                             </form>
                         </div>

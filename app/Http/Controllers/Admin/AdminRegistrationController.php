@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Support\MessageBag;
 use App\Models\Admin;
 
 class AdminRegistrationController extends Controller
@@ -16,6 +17,14 @@ class AdminRegistrationController extends Controller
     {
         if(Auth::guard('admin')->check())
         {
+            $admin_id = Auth::guard('admin')->user()->admin_id;
+            $admin_break = Admin::select('break')->where('admin_id', '=', $admin_id)->get();
+            if($admin_break[0]->break == 0) {
+                Auth::guard('admin')->logout();
+                $errors = new MessageBag(['admin_id' => ['許可が一時停止されました。']]);
+                return view('auth.admin.login')->withErrors($errors);
+            }
+            
             $data = Admin::max('id') + 1;
             return view('auth.admin.register', ['admin_no' => $data]);
         }

@@ -22,6 +22,8 @@ class CreateTicketTable extends Migration
             $table->string('adult_ticket')->nullable();
             $table->string('young_ticket')->nullable();
             $table->string('location')->nullable();
+            $table->string('area')->nullable();
+            $table->date('ticketing_date')->nullable();
             $table->timestamps();
         });
     }

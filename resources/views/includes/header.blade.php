@@ -1,13 +1,13 @@
 <div class="navbar">
     <h1>
-        ジブリパークチケット購入者<br>
-        <span>統計データ提供サイト</span>
+        ジブリパーク周遊観光促進事業<br>
+        <span>チケット購入統計データ提供サイト</span>
     </h1>
 </div>
 <div class="menubar">
     <div class="menubar-group">
         <div class="menubar-name">
-            さん
+            {{ \Auth::guard('admin')->user()->name}}さん
         </div>
     </div>
     <a href="{{ route('adminLogout') }}" class="menubar-btn">

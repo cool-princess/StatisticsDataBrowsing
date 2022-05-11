@@ -17,6 +17,7 @@
         "laravelcollective/html": "^6.3",
         "maatwebsite/excel": "^3.1",
         "nesbot/carbon": "^2.57",
+        "sendgrid/sendgrid": "^7.11",
         "yoeunes/toastr": "^1.2"
     },
     "require-dev": {

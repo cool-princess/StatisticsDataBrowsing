@@ -31,9 +31,10 @@ class UsersImport implements ToModel, WithValidation, WithStartRow
                 goto loop;
             }
         }
+        $password = substr(md5(mt_rand()), 0, 8);
         return new User([
             'user_id'     => $custom_id,
-            'password'     => bcrypt(substr(md5(mt_rand()), 0, 8)),
+            'password'     => bcrypt($password),
             'company_name'     => mb_convert_kana($row[0], "KVC"),
             'furi_company_name'     => mb_convert_encoding($row[1], 'UTF-8', 'EUC-JP'),
             'department_name'     => mb_convert_encoding($row[2], 'UTF-8', 'EUC-JP'),
@@ -49,7 +50,7 @@ class UsersImport implements ToModel, WithValidation, WithStartRow
             'address4'     => $row[12],
             'sectors'     => $row[13],
             'break' => $row[14],
-            'pwd_store' => substr(md5(mt_rand()), 0, 8)
+            'pwd_store' => $password
         ]);
     }
 
@@ -67,21 +68,23 @@ class UsersImport implements ToModel, WithValidation, WithStartRow
             'address2'     => 'string',
             'address3'     => 'string',
             'address4'     => 'string',
-            'sectors'     => 'string'
+            'sectors'     => 'string',
+            'break'     => 'required',
         ];
     }
 
     public function customValidationAttributes()
     {
         return [
-            'email'         => 'User Email',
+            'email'         => 'メール',
         ];
     } 
 
     public function customValidationMessages()
     {
         return [
-            'email.email' => 'Email type is error.',
+            'email.email' => 'メール形式にエラーがあります。',
+            'break.required' => 'ブレークフィールドは必須です。',
         ];
     }
   

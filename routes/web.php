@@ -11,6 +11,7 @@ use App\Http\Controllers\TicketCsvUploadController;
 use App\Http\Controllers\StatisticsFileController;
 use App\Http\Controllers\ImportExportController;
 use App\Http\Controllers\MailSendController;
+use App\Http\Controllers\MessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,22 +26,11 @@ use App\Http\Controllers\MailSendController;
 
 Auth::routes();
 
-Route::get('/admin/login', [LoginController::class, 'showAdminLoginForm'])->name('showAdminLoginForm');
-Route::post('/admin/login', [LoginController::class,'adminLogin'])->name('adminLoginPost');
 Route::get('/user/login', [LoginController::class, 'showUserLoginForm'])->name('showUserLoginForm');
-Route::post('/user/login', [LoginController::class,'userLogin'])->name('userLoginPost');
+Route::post('/user/home', [LoginController::class,'userLogin'])->name('userLoginPost');
 Route::get('/user/home', [LoginController::class,'userHome'])->name('userHome');
 
-Route::get('/admin/logout', [LogoutController::class,'adminLogout'])->name('adminLogout');
 Route::get('/user/logout', [LogoutController::class,'userLogout'])->name('userLogout');
-
-Route::get('/admin/register', [AdminRegistrationController::class,'show'])->name('adminRegister');
-Route::post('/admin/register', [AdminRegistrationController::class,'store'])->name('adminRegisterPost');
-
-Route::get('/admin/home', [AdminDashboardController::class, 'index'])->name('adminHome');
-
-Route::get('/admin/user_register', [UserRegistrationController::class, 'index'])->name('userRegister');
-Route::post('/admin/user_register', [UserRegistrationController::class, 'store'])->name('userRegisterPost');
 
 Route::group(['middleware' => 'auth:user'], function () {
     Route::view('/user', 'user');
@@ -50,7 +40,27 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::view('/admin', 'admin');
 });
 
-Route::post('/admin/news', [AdminDashboardController::class, 'store'])->name('newsRegisterPost');
+Route::get('/user/get/{id}', [UserRegistrationController::class, 'getInfo'])->name('userGet');
+Route::get('/user/data_search', [LoginController::class, 'dataSearch'])->name('dataSearchGet');
+Route::post('/user/update/{user_id}', [UserRegistrationController::class, 'updateInfo'])->name('userUpdatePost');
+Route::get('/user/delete/{user_id}', [UserRegistrationController::class, 'delete'])->name('userDelete');
+Route::post('user/report_file_export', [StatisticsFileController::class, 'reportFileExport'])->name('reportDownloadPost');
+
+Route::post('/user/contact', [MailSendController::class, 'contactMail'])->name('contactPost');
+
+Route::get('/admin/login', [LoginController::class, 'showAdminLoginForm'])->name('showAdminLoginForm');
+Route::post('/admin/login', [LoginController::class,'adminLogin'])->name('adminLoginPost');
+Route::get('/admin/logout', [LogoutController::class,'adminLogout'])->name('adminLogout');
+
+Route::get('/admin/register', [AdminRegistrationController::class,'show'])->name('adminRegister');
+Route::post('/admin/register', [AdminRegistrationController::class,'store'])->name('adminRegisterPost');
+
+Route::get('/admin/home', [AdminDashboardController::class, 'index'])->name('adminHome');
+
+Route::get('/admin/user_register', [UserRegistrationController::class, 'index'])->name('userRegister');
+Route::post('/admin/user_register', [UserRegistrationController::class, 'store'])->name('userRegisterPost');
+
+Route::post('/admin/home', [AdminDashboardController::class, 'store'])->name('newsRegisterPost');
 Route::post('/admin/news_update/{no}', [AdminDashboardController::class, 'update'])->name('newsUpdatePost');
 Route::get('/admin/news_delete/{no}', [AdminDashboardController::class, 'delete'])->name('newsDelete');
 
@@ -59,10 +69,7 @@ Route::get('/admin/get/{id}', [AdminManageController::class, 'getInfo'])->name('
 Route::post('/admin/update/{admin_id}', [AdminManageController::class, 'updateInfo'])->name('adminUpdatePost');
 Route::get('/admin/delete/{admin_id}', [AdminManageController::class, 'delete'])->name('adminDelete');
 
-Route::get('/user/get/{id}', [UserRegistrationController::class, 'getInfo'])->name('userGet');
 Route::get('/admin/user_search', [UserRegistrationController::class, 'userSearch'])->name('userSearchPost');
-Route::post('/user/update/{user_id}', [UserRegistrationController::class, 'updateInfo'])->name('userUpdatePost');
-Route::get('/user/delete/{user_id}', [UserRegistrationController::class, 'delete'])->name('userDelete');
 Route::get('/admin/user_manage', [UserRegistrationController::class, 'show'])->name('userManage');
 
 Route::get('/admin/visitor_csv_upload', [TicketCsvUploadController::class, 'createCsvForm'])->name('visitorCsvRegister');
@@ -85,14 +92,14 @@ Route::get('/admin/statistics_file_update/{id}', [StatisticsFileController::clas
 Route::post('/admin/statistics_file_update/{id}', [StatisticsFileController::class,'statisticsFileUpdate'])->name('statisticsFileUpdatePost');
 Route::get('/admin/statistics_file_delete/{id}', [StatisticsFileController::class, 'delete'])->name('statisticsFileDelete');
 Route::get('admin/statistics_file_export/{id}', [StatisticsFileController::class, 'statisticsFileExport'])->name('statisticsFileExport');
-Route::post('user/report_file_export', [StatisticsFileController::class, 'reportFileExport'])->name('reportDownloadPost');
+
+Route::get('/admin/mail_status', [MailSendController::class, 'index'])->name('mail');
 Route::get('/admin/mail_create', [MailSendController::class, 'show'])->name('mailCreate');
 Route::post('/admin/mail_send', [MailSendController::class, 'sendMail'])->name('mailSendPost');
-
-Route::get('/admin/mail', function () {
-    return view('pages.admin.mail_send');
-})->name('mail');
-
-
-
-
+Route::get('/admin/mail_resend/{id}', [MailSendController::class, 'resendmail'])->name('mailResend');
+Route::get('/admin/mail_update/{id}', [MailSendController::class, 'mailUpdate'])->name('mailUpdate');
+Route::post('/admin/mail_update', [MailSendController::class, 'mailUpdatePost'])->name('mailUpdatePost');
+Route::get('/admin/mail_search', [MailSendController::class, 'mailSearch'])->name('mailSearchGet');
+Route::get('/admin/user_mail_search/{id}', [MailSendController::class, 'userMailSearch'])->name('userMailSearchGet');
+Route::get('/admin/user_mail_update_search/{id}', [MailSendController::class, 'userMailUpdateSearch'])->name('userMailUpdateSearchGet');
+Route::get('/admin/user_mail_create_search', [MailSendController::class, 'userMailCreateSearch'])->name('userMailCreateSearchGet');

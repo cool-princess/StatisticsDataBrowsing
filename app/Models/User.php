@@ -36,7 +36,8 @@ class User extends Authenticatable
         'address4',
         'sectors',
         'break',
-        'pwd_store'
+        'pwd_store',
+        'download_count'
     ];
 
     /**

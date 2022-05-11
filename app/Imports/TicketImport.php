@@ -15,6 +15,7 @@ use Maatwebsite\Excel\Concerns\WithStartRow;
 class TicketImport implements ToModel, WithValidation, WithStartRow
 {
     use Importable;
+
     /**
     * @param array $row
     *
@@ -22,29 +23,39 @@ class TicketImport implements ToModel, WithValidation, WithStartRow
     */
     public function model(array $row)
     {
-        $date = strtotime($row[27]);
+        $birth_date = strtotime($row[27]);
+        $ticketing_date = strtotime($row[5]);
         return new Ticket([
             'order_number' => $row[0],
             'name' => $row[7],
             'sex' => $row[26],
-            'birthday' => date('Y-m-d H:i:s', $date),
+            'birthday' => date('Y-m-d H:i:s', $birth_date),
             'adult_ticket' => $row[51],
             'young_ticket' => $row[54],
-            'location' =>$row[29],
+            'location' => $row[29],
+            'area' => $row[15],
+            'ticketing_date' => date('Y-m-d H:i:s', $ticketing_date)
         ]);
     }
 
     public function rules(): array
     {
         return [
-            'order_number' => 'string',
+            'order_number' => 'string|unique',
             'name'     => 'string',
             'sex'     => 'string',
             'birthday'     => 'string',
             'adult_ticket'     => 'string',
             'young_ticket'     => 'string',
-            'location'     => 'string'
+            'location'     => 'string',
+            'area'     => 'string',
+            'ticketing_date'     => 'string'
         ];
+    }
+
+    public function chunkSize(): int
+    {
+        return 1000;
     }
 
     public function startRow(): int

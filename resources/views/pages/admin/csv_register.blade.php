@@ -28,25 +28,24 @@
                                     登録状況
                                 </div>
                                 <div class="csv-register-status-report">
-                                    <span class="csv-register-date">2022.10.25　13：32</span><br>
-                                    登録を完了しました
+                                    @if(session()->has('success'))
+                                        <span class="csv-register-date">{{ \Carbon\Carbon::now()->toDateTimeString() }}</span><br>
+                                        {{ session()->get('success') }}
+                                    @endif
+                                </div>
+                                <div class="csv-register-status-error">
                                     @if($errors->any())
+                                        <span class="csv-register-date">{{ \Carbon\Carbon::now()->toDateTimeString() }}</span><br>
+                                        登録に失敗しました。<br>
                                         <div class="alert alert-danger">
                                             <ul>
                                             @foreach ($errors->all() as $error)
                                                 <li>{{ $error }}</li>
                                             @endforeach
                                             </ul>
+                                            csvファイルを修正して再度登録ください。
                                         </div>
                                     @endif
-                                </div>
-                                <div class="csv-register-status-error">
-                                    <span class="csv-register-date">2022.10.25　13：32</span><br>
-                                    登録されませんでした
-                                    3行目にエラーがあります
-                                    12行目にエラーがあります
-                                    25行目にエラーがあります
-                                    CSVファイルを修正して再度ご登録ください
                                 </div>
                             </div>
                         </div>

@@ -25,11 +25,13 @@
                                     配信済み・予約・保存メール
                                 </div>
                                 <div class="mail-send-filter">
-                                    <div class="mail-send-name">
-                                        絞り込み
-                                    </div>
-                                    <input type="text">
-                                    <a href="" class="mail-send-filter-btn btn-primary">検索</a>
+                                    <form method="get" action="{{ route('mailSearchGet') }}">
+                                        <div class="mail-send-name">
+                                            絞り込み
+                                        </div>
+                                        <input type="text" name="keyword">
+                                        <button type="submit" class="mail-send-filter-btn btn-primary">検索</button>
+                                    </form>
                                 </div>
                                 <div class="admin-list-body">
                                     <table>
@@ -40,46 +42,42 @@
                                             <th>タイトル</th>
                                             <th></th>
                                         </tr>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>保</td>
-                                            <td>2022.10.22 13:00</td>
-                                            <td>□□□□◯□□□□◆□□□□◯□□□□◆□□・・・</td>
-                                            <td><a href="" class="mail-send-reuse-btn btn-primary">再利用</a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>予</td>
-                                            <td>2022.10.22 13:00</td>
-                                            <td>□□□□◯□□□□◆□□□□◯□□□□◆□□・・・</td>
-                                            <td><a href="" class="mail-send-reuse-btn btn-primary">再利用</a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>保</td>
-                                            <td>2022.10.22 13:00</td>
-                                            <td>□□□□◯□□□□◆□□□□◯□□□□◆□□・・・</td>
-                                            <td><a href="" class="mail-send-reuse-btn btn-primary">再利用</a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>送</td>
-                                            <td>2022.10.22 13:00</td>
-                                            <td>□□□□◯□□□□◆□□□□◯□□□□◆□□・・・</td>
-                                            <td><a href="" class="mail-send-reuse-btn btn-primary">再利用</a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>5</td>
-                                            <td>保</td>
-                                            <td>2022.10.22 13:00</td>
-                                            <td>□□□□◯□□□□◆□□□□◯□□□□◆□□・・・</td>
-                                            <td><a href="" class="mail-send-reuse-btn btn-primary">再利用</a></td>
-                                        </tr>
+                                        <?php $i = 1; ?>
+                                            @forelse($mails as $mail)
+                                                <tr>
+                                                    <td>{{ $i }}</td>
+                                                    @if($mail->delivered == '送')
+                                                        <td style="color: blue;">{{ $mail->delivered }}</td>
+                                                    @elseif($mail->delivered == '予')
+                                                        <td style="color: red;">{{ $mail->delivered }}</td>
+                                                    @else
+                                                        <td>{{ $mail->delivered }}</td>
+                                                    @endif
+                                                    <td>{{ $mail->reserve_date }}</td>
+                                                    <td>{{ $mail->title }}</td>
+                                                    <td><a href="{{ route('mailResend', ['id' => $mail->id]) }}" class="mail-send-reuse-btn btn-primary">再利用</a></td>
+                                                </tr>
+                                                <?php $i++; ?>
+                                            @empty
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>  
+                                            @endforelse
                                     </table>
                                     <div class="mail-send-pagination main-pagination">
-                                        <button class="main-pagination-prev btn-primary">前のページへ</button>
-                                        <div class="main-pagination-pages">１ / 4 </div>
-                                        <button class="main-pagination-next btn-primary">次のページへ</button>
+                                        @if($mails->currentPage() != 1)
+                                            <a href="{{ $mails->previousPageUrl() }}" class="main-pagination-prev btn-primary">前のページへ</a>
+                                        @endif
+                                        @if($mails->total() > 5)
+                                            <div class="main-pagination-pages">{{ $mails->currentPage() }} / {{ $mails->lastPage() }} </div>
+                                        @endif
+                                        @if($mails->currentPage() != $mails->lastPage())
+                                            <a href="{{ $mails->nextPageUrl() }}" class="main-pagination-next btn-primary">次のページへ</a>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

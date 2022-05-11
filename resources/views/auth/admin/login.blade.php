@@ -6,7 +6,7 @@
             <div class="login-wrap custom-font-color">
                 <div class="login-title custom-font-color">
                     <h1>ジブリパークチケット購入者<br>
-                        統計データ提供サイト
+                        統計データ提供サイト：管理者
                     </h1>
                 </div>
                 @if ($error = $errors->first('admin_id'))
@@ -62,7 +62,7 @@
                         ・連絡先<br>
                         愛知県観光コンベンション局観光振興課<br>
                         企画グループ<br>
-                        <a href="kanko@pref.aichi.lg.jp">kanko@pref.aichi.lg.jp</a>
+                        <a href="mailto:kanko@pref.aichi.lg.jp">kanko@pref.aichi.lg.jp</a>
                     </p>
                     <a href="#" class="modal-close">&times;</a>
                 </div>

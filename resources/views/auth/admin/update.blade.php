@@ -32,6 +32,7 @@
                                                     <input type="radio" id="break-on" name="break" value="1"><label for="break-on">ON</label>
                                                     <input type="radio" id="break-off" name="break" value="0" checked><label for="break-off">OFF</label>
                                                 @endif
+                                                <p>※休止の場合はOFFを選択</p>
                                             </div>
                                         </div>
                                     </div>
@@ -144,7 +145,7 @@
                                     </div>
                                 </div>
                                 <div class="admin-register-btn-group">
-                                    <button type="submit" class="admin-register-btn btn-primary">新規登録・修正　確認画面へ</button>
+                                    <button type="submit" class="admin-register-btn btn-primary">新規登録・修正</button>
                                     <a href="{{ route('adminDelete', ['admin_id' => $data[0]->admin_id]) }}" class="admin-delete-btn btn-danger">登録を削除</a>
                                 </div>
                             </form>

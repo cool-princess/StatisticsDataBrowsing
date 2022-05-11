@@ -31,8 +31,8 @@ class SendGrid extends Mailable
     {
         return $this->markdown('pages.admin.mail_create')
                     ->with([
-                        'message' => $this->input['message'],
+                        'message' => $this->input['message']
                     ])
-                    ->from('test@gmail.com', 'Vector Global');
+                    ->from('user9876123james@gmail.com', 'SMBY');
     }
 }
